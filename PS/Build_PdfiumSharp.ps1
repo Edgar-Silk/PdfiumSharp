@@ -56,14 +56,14 @@ function buildVS {
 }
 
 # GitHubプロジェクトを取得する
-$Project_Name = 'SilkWrapperNET'
+$Project_Name = 'PdfiumSharp'
 Write-Host "Getting Wrapper repository from github"
 
-git clone -q --branch=master 'https://github.com/Test-Silk/SilkWrapperNET'
+git clone -q --branch=master 'https://github.com/Edgar-Silk/PdfiumSharp'
 
 Set-Location $WrapperDir'/'$Project_Name
 
-buildVS -path ./SilkWrapperNET.sln 
+buildVS -path ./PdfiumSharp.sln 
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
@@ -101,7 +101,7 @@ if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
 Write-Host "Make NuGet Package..."
 
 Set-Location $WrapperDir"/"$Project_Name"/"$Project_Name
-nuget pack SilkWrapperNET.csproj -properties "Configuration=Release;Platform=$Arch"
+nuget pack PdfiumSharp.csproj -properties "Configuration=Release;Platform=$Arch"
 
 # ビルドのテンポラリーパスを設定する
 $OUT_NUGET_DIR = $BuildDir+'/NuGet/'+$Arch
