@@ -7,21 +7,15 @@ param (
     [string]$Wrapper_Branch = ' '
 )
 
+# Project Name
+$Project_Name = 'PdfiumSharp'
+
 # ビルドディレクトリー
 $BuildDir = (Get-Location).path
 
 # コンフィグ
 Write-Host "Architecture: " $Arch
 Write-Host "Directory to Build: " $BuildDir
-
-# ビルドテンポラリーパスを設定する
-if ([System.IO.Directory]::Exists($WrapperDir)) {
-    Set-Location $WrapperDir
-}
-else {
-    New-Item -Path $WrapperDir -ItemType Directory
-    Set-Location $WrapperDir
-}
 
 # Visual Studio MSI-Builder - コンパイラーを設定する
 Write-Host "Locate VS 2017 MSBuilder.exe"
@@ -46,14 +40,12 @@ function buildVS {
     }
 }
 
-# GitHubプロジェクトを取得する
-$Project_Name = 'PdfiumSharp'
 
-buildVS -path "C:/projects/pdfiumsharp/PdfiumSharp.sln"
+
+buildVS -path "$env:APPVEYOR_BUILD_FOLDER\$ProjectName.sln"
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
-#Set-Location $BuildDir'/pdfium'
 
 if ($Arch -eq 'x64') {
     $OUT_DLL_DIR = $BuildDir + '/Lib/x64'
