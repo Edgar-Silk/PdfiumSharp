@@ -53,7 +53,7 @@ buildVS -path "C:/projects/pdfiumsharp/PdfiumSharp.sln"
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
-Set-Location $BuildDir'/pdfium'
+#Set-Location $BuildDir'/pdfium'
 
 if ($Arch -eq 'x64') {
     $OUT_DLL_DIR = $BuildDir + '/Lib/x64'
@@ -87,7 +87,7 @@ if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
 Write-Host "Make NuGet Package..."
 
 Set-Location $BuildDir"/"$Project_Name
-nuget pack SilkWrapperNET.csproj -properties "Configuration=Release;Platform=$Arch"
+nuget pack PdfiumSharp.csproj -properties "Configuration=Release;Platform=$Arch"
 
 # ビルドのテンポラリーパスを設定する
 $OUT_NUGET_DIR = $BuildDir+'/NuGet/'+$Arch
