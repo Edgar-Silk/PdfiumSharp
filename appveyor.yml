@@ -2,11 +2,11 @@ version: 1.0.{build}
 image: Visual Studio 2017
 
 before_build:
-#    ps: ./Build_PDFium.ps1 -Arch x64
+    ps: ./Build_PDFium.ps1 -Arch x86
 
 build_script:
   #include_nuget_references: true
-    ps: ./Build_PdfiumSharp.ps1
+    ps: ./Build_PdfiumSharp.ps1 -Arch x86
 
 
 
