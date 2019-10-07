@@ -6,7 +6,7 @@ configuration: Release
 
 build_script:
   #include_nuget_references: true
-    ps: ls
+    ps: ./Build_PdfiumSharp.ps1
 
 
 
