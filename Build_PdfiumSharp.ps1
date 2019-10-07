@@ -40,9 +40,7 @@ function buildVS {
     }
 }
 
-
-
-buildVS -path "$env:APPVEYOR_BUILD_FOLDER\$Project_Name.sln"
+buildVS -path "$BuildDir\$Project_Name.sln"
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
