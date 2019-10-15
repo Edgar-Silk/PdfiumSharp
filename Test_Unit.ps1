@@ -58,7 +58,7 @@ else {
 }
 
 # solutionをコピーする
-Write-Host "Copy pdfium DLL to PdfiumSharp solution project"
+Write-Host "Copy pdfium DLL to PdfiumSharp.Test solution project"
 
 $Lib_Dir = $BuildDir+"/"+$Project_Name+"/lib/"+$Arch
 

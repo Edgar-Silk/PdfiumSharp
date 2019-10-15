@@ -8,7 +8,7 @@ build_script:
     - ps: ./Build_PdfiumSharp.ps1
 
 test_script:
-    - ps: nunit3-console     
+    - ps: ./Test_Unit.ps1    
 
 
 
