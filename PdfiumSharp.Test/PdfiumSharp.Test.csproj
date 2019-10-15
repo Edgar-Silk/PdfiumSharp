@@ -80,6 +80,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy /y /d "$(ProjectDir)\lib\$(Platform)\*" "$(TargetDir)"</PreBuildEvent>
+    <PreBuildEvent>xcopy /y /d "$(ProjectDir)lib\$(Platform)\*" "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
 </Project>
