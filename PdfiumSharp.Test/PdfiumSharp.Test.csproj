@@ -78,10 +78,8 @@
       <Version>3.15.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="pdfium.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /y /d "$(ProjectDir)\lib\$(Platform)\*" "$(TargetDir)"</PreBuildEvent>
+  </PropertyGroup>
 </Project>
