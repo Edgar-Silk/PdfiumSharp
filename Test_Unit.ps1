@@ -40,8 +40,48 @@ function buildVS {
     }
 }
 
+# Restore NuGet packages. This us used for NUnit3 
+dotnet restore 
+
+# DLLが存在するかチェックしWrapper/Libへコピーする
+Write-Host "Checking for PDFium.DLL library..."
+
+if ($Arch -eq 'x64') {
+    $OUT_DLL_DIR = $BuildDir + '/Lib/x64'
+}
+elseif ($Arch -eq 'x86') {
+    $OUT_DLL_DIR = $BuildDir + '/Lib/x86'
+}
+else {
+    Write-Host "Arch not defined or invalid..."
+    Exit
+}
+
+# solutionをコピーする
+Write-Host "Copy pdfium DLL to PdfiumSharp solution project"
+
+$Lib_Dir = $BuildDir+"/"+$Project_Name+"/lib/"+$Arch
+
+if ([System.IO.Directory]::Exists( $Lib_Dir )) {
+    Set-Location $Lib_Dir
+}
+else {
+    New-Item -Path $Lib_Dir -ItemType Directory
+    Set-Location $Lib_Dir
+}
+
+if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
+    Copy-Item $OUT_DLL_DIR'/pdfium.dll' -Destination $Lib_Dir
+}
+
+
+# Build the unit test project
 buildVS -path "$BuildDir/$Project_Name/$Project_Name.csproj"
 
+# Make the test
+Set-Location $BuildDir/$Project_Name
+
+nunit3-console "bin/$Arch/Release/$Project_Name.dll"
 
 
 Set-Location $BuildDir
