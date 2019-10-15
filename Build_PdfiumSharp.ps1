@@ -40,7 +40,7 @@ function buildVS {
     }
 }
 
-buildVS -path "$BuildDir/$Project_Name.sln"
+buildVS -path "$BuildDir/$Project_Name/$Project_Name.csproj"
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
