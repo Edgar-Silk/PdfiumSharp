@@ -32,7 +32,7 @@ function buildVS {
 
         if ($clean) {
             Write-Host "Cleaning $($path)" -foregroundcolor green
-            & "$($msBuildExe)" "$($path)" /t:Clean /m 
+            & "$($msBuildExe)" "$($path)" /t:Clean /m /p:Configuration=Release,Platform=$Arch /v:n
         }
 
         Write-Host "Building $($path)" -foregroundcolor green
