@@ -74,7 +74,7 @@ if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
 }
 
 # NuGetパッケージを作成する
-Write-Host "Make NuGet Package..."
+Write-Host "Make NuGet Package..." -foregroundcolor green
 
 Set-Location $BuildDir"/"$Project_Name
 nuget pack PdfiumSharp.csproj -properties "Configuration=Release;Platform=$Arch"
