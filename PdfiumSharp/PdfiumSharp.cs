@@ -154,8 +154,8 @@ namespace PdfiumSharp{
 
   public class PDF {
 
-    public static string file;
-    public static IntPtr doc;
+    public string file;
+    public IntPtr doc;
     public PDF() {
       // Native call return void argument...
       Native.FPDF_InitLibrary();
@@ -167,7 +167,7 @@ namespace PdfiumSharp{
     }
 
 
-    public static bool Load(string F) {
+    public bool Load(string F) {
 
       file = F;
 
@@ -178,12 +178,12 @@ namespace PdfiumSharp{
 
     }
 
-    public static int PageCount() {
+    public int PageCount() {
 
       return Native.FPDF_GetPageCount(doc);
 
     }
-    public static PdfInformation GetInformation() {
+    public PdfInformation GetInformation() {
       var pdfInfo = new PdfInformation();
 
       pdfInfo.Creator = Native.GetMetaText(doc, "Creator");
@@ -199,7 +199,7 @@ namespace PdfiumSharp{
     }
 
     // For Rendering
-    public static bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY,
+    public bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY,
                                              int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight,
                                              int rotate, Native.FPDF flags, bool renderFormFill) {
       //if (_disposed)
@@ -220,7 +220,7 @@ namespace PdfiumSharp{
       return true;
     }
 
-    public static Image Render(int page, int width, int height, float dpiX, float dpiY) {
+    public Image Render(int page, int width, int height, float dpiX, float dpiY) {
       //PdfRotation rotate, PdfRenderFlags flags){
 
       //if (_disposed)
@@ -244,7 +244,7 @@ namespace PdfiumSharp{
           uint background = 0xFFFFFFFF;
           Native.FPDFBitmap_FillRect(handle, 0, 0, width, height, background);
 
-          bool success = PDF.RenderPDFPageToBitmap(
+          bool success = this.RenderPDFPageToBitmap(
               page,
               handle,
               (int)dpiX, (int)dpiY,

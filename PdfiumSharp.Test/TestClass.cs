@@ -25,7 +25,7 @@ namespace PdfiumSharp.Test
 
       Console.WriteLine("\nOpen PDF file: " + File);
 
-      PDF.Load(File);
+      P.Load(File);
     }
 
     [OneTimeTearDown]
@@ -38,9 +38,9 @@ namespace PdfiumSharp.Test
     public void MetaInfoTest() 
     {
       
-      Console.WriteLine("\nNumber of Pages:" + PDF.PageCount().ToString());
+      Console.WriteLine("\nNumber of Pages:" + P.PageCount().ToString());
 
-      var inf = PDF.GetInformation();
+      var inf = P.GetInformation();
       Console.WriteLine("\nCreator: " + inf.Creator);
       Console.WriteLine("\nTitle: " + inf.Title);
       Console.WriteLine("\nAuthor: " + inf.Author);
@@ -50,7 +50,7 @@ namespace PdfiumSharp.Test
       Console.WriteLine("\nCreationDate: " + inf.CreationDate);
       Console.WriteLine("\nModDate: " + inf.ModificationDate);
 
-      int expectedResult = PDF.PageCount();
+      int expectedResult = P.PageCount();
 
       Assert.That(expectedResult, Is.EqualTo(1000));
 
@@ -65,7 +65,7 @@ namespace PdfiumSharp.Test
       int dpiX = 460;
       int dpiY = 520;
 
-      Image i = PDF.Render(pageNumber, width, height, dpiX, dpiY);
+      Image i = P.Render(pageNumber, width, height, dpiX, dpiY);
 
       string imageType = new ImageFormatConverter().ConvertToString(i.RawFormat);
                     
