@@ -198,7 +198,7 @@ namespace PdfiumSharp{
       return pdfInfo;
     }
 
-    ////////////////////////// For Render
+    // For Rendering
     public static bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY,
                                              int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight,
                                              int rotate, Native.FPDF flags, bool renderFormFill) {
