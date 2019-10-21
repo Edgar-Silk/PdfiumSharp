@@ -31,6 +31,7 @@ namespace PdfiumSharp.Test
     [OneTimeTearDown]
     public void TearDown() 
     {
+      Console.WriteLine("\nObject to Null");
       P = null;
     }
 
