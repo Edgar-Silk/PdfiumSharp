@@ -17,6 +17,10 @@ $BuildDir = (Get-Location).path
 Write-Host "Architecture: " $Arch
 Write-Host "Directory to Build: " $BuildDir
 
+# Restore NuGet packages. This us used for NUnit3 
+Write-Host "Restore NuGet Packages - NUnit3"
+dotnet restore 
+
 # Visual Studio MSI-Builder - コンパイラーを設定する
 Write-Host "Locate VS 2017 MSBuilder.exe"
 function buildVS {
@@ -39,9 +43,6 @@ function buildVS {
         & "$($msBuildExe)" "$($path)" /t:Build /m /p:Configuration=Release,Platform=$Arch /v:n
     }
 }
-
-# Restore NuGet packages. This us used for NUnit3 
-dotnet restore 
 
 # DLLが存在するかチェックしWrapper/Libへコピーする
 Write-Host "Checking for PDFium.DLL library..."
