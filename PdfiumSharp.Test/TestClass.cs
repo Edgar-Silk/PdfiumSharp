@@ -9,7 +9,7 @@ namespace PdfiumSharp.Test
   [TestFixture]
   public class PdfiumTest
   {
-    static PDF P;
+    public PDF P;
 
     [OneTimeSetUp]
     public void SetUp() 
