@@ -87,4 +87,3 @@ nunit3-console "bin/$Arch/Release/$Project_Name.dll"
 
 Set-Location $BuildDir
 
-ls

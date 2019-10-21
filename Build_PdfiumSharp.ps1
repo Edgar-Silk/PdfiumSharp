@@ -97,4 +97,3 @@ Copy-Item -Path "$BuildDir/$Project_Name/*.*.*.*.nupkg" -Destination $OUT_NUGET_
 
 Set-Location $BuildDir
 
-ls
