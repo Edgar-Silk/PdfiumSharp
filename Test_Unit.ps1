@@ -7,7 +7,7 @@ param (
     [string]$Wrapper_Branch = ' '
 )
 
-# Project Name
+# プログラム名
 $Project_Name = 'PdfiumSharp.Test'
 
 # ビルドディレクトリー
@@ -17,7 +17,7 @@ $BuildDir = (Get-Location).path
 Write-Host "Architecture: " $Arch
 Write-Host "Directory to Build: " $BuildDir
 
-# Restore NuGet packages. This is used to include NUnit3 in our project.
+# NuGetパッケージをリストアする(NUnit3をインクルードするために使用)
 Write-Host "Restore NuGet Packages - NUnit3"
 dotnet restore 
 
@@ -76,10 +76,10 @@ if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
 }
 
 
-# Build the unit test project
+# ユニットテストプロジェクトをビルドする
 buildVS -path "$BuildDir/$Project_Name/$Project_Name.csproj"
 
-# Make the test
+# テストを作成する
 Set-Location $BuildDir/$Project_Name
 
 nunit3-console "bin/$Arch/Release/$Project_Name.dll"

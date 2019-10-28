@@ -7,7 +7,7 @@ param (
     [string]$Wrapper_Branch = ' '
 )
 
-# Project Name
+# プロジェクト名
 $Project_Name = 'PdfiumSharp'
 
 # ビルドディレクトリー
