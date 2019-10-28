@@ -77,7 +77,7 @@ if (Test-Path -Path $OUT_DLL_DIR'/pdfium.dll') {
 Write-Host "Make NuGet Package..." -foregroundcolor green
 
 Set-Location $BuildDir"/"$Project_Name
-nuget pack PdfiumSharp.csproj -properties "Configuration=Release;Platform=$Arch"
+nuget pack "$Project_Name.csproj" -properties "Configuration=Release;Platform=$Arch"
 
 # ビルドのテンポラリーパスを設定する
 $OUT_NUGET_DIR = $BuildDir+'/NuGet/'+$Arch

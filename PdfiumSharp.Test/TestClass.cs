@@ -14,10 +14,9 @@ namespace PdfiumSharp.Test
     [OneTimeSetUp]
     public void SetUp() 
     {
-      // Initialize the library
+     
       P = new PDF();
 
-      // Load the pdf file
       string Path = AppDomain.CurrentDomain.BaseDirectory;
       string FileName = "test.pdf";
 

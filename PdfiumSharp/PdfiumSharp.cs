@@ -68,9 +68,9 @@ namespace PdfiumSharp{
     public static extern IntPtr FPDFText_LoadPage(IntPtr page);
 
     public static string GetMetaText(IntPtr _document, string _tag) {
-      // Length includes a trailing \0.
+      
       uint length = FPDF_GetMetaText(_document, _tag, null, 0);
-      //Console.WriteLine("\nlenght: " + length);
+      
       if (length <= 2)
         return string.Empty;
 
@@ -157,7 +157,7 @@ namespace PdfiumSharp{
     public string file;
     public IntPtr doc;
     public PDF() {
-      // Native call return void argument...
+      
       Native.FPDF_InitLibrary();
 
     }
@@ -198,38 +198,22 @@ namespace PdfiumSharp{
       return pdfInfo;
     }
 
-    // For Rendering
     public bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY,
                                              int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight,
                                              int rotate, Native.FPDF flags, bool renderFormFill) {
-      //if (_disposed)
-      //  throw new ObjectDisposedException(GetType().Name);
-
+      
       using (var pageData = new PageData(doc, pageNumber)) {
-        // if (renderFormFill)
-        //   flags &= ~NativeMethods.FPDF.ANNOT;
-
-        //Native.FPDF_RenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY, 
-        //                            boundsWidth, boundsHeight, rotate, flags);
+        
         Native.FPDF_RenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY,
                                     boundsWidth, boundsHeight, 0, flags);
-        //if (renderFormFill)
-        // NativeMethods.FPDF_FFLDraw(_form, bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY, boundsWidth, boundsHeight, rotate, flags);
-      }
+
+        }
 
       return true;
     }
 
     public Image Render(int page, int width, int height, float dpiX, float dpiY) {
-      //PdfRotation rotate, PdfRenderFlags flags){
-
-      //if (_disposed)
-      //   throw new ObjectDisposedException(GetType().Name);
-
-      //if ((flags & PdfRenderFlags.CorrectFromDpi) != 0){
-      //width = width* (int) dpiX / 72;
-      //height = height* (int) dpiY / 72;
-      //}
+      
 
       var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
       bitmap.SetResolution(dpiX, dpiY);
@@ -240,7 +224,7 @@ namespace PdfiumSharp{
         var handle = Native.FPDFBitmap_CreateEx(width, height, 4, data.Scan0, width * 4);
 
         try {
-          //uint background = (flags & PdfRenderFlags.Transparent) == 0 ? 0xFFFFFFFF : 0x00FFFFFF;
+          
           uint background = 0xFFFFFFFF;
           Native.FPDFBitmap_FillRect(handle, 0, 0, width, height, background);
 
@@ -250,9 +234,8 @@ namespace PdfiumSharp{
               (int)dpiX, (int)dpiY,
               0, 0, width, height,
               0,
-              0, //FlagsToFPDFFlags(flags),
-              false //(flags & PdfRenderFlags.Annotations) != 0
-          );
+              0, 
+              false);
 
           if (!success)
             throw new Win32Exception();

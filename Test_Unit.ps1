@@ -1,4 +1,4 @@
-﻿# PDFium.DLLをビルドするためのスクリプト -- depot_toolsをインクルードする
+﻿# Unit Test
 # パラメーター
 param (
     # オプション: x86 | x64
@@ -17,7 +17,7 @@ $BuildDir = (Get-Location).path
 Write-Host "Architecture: " $Arch
 Write-Host "Directory to Build: " $BuildDir
 
-# Restore NuGet packages. This us used for NUnit3 
+# Restore NuGet packages. This is used to include NUnit3 in our project.
 Write-Host "Restore NuGet Packages - NUnit3"
 dotnet restore 
 
@@ -83,7 +83,6 @@ buildVS -path "$BuildDir/$Project_Name/$Project_Name.csproj"
 Set-Location $BuildDir/$Project_Name
 
 nunit3-console "bin/$Arch/Release/$Project_Name.dll"
-
 
 Set-Location $BuildDir
 
