@@ -17,6 +17,9 @@ $BuildDir = (Get-Location).path
 Write-Host "Architecture: " $Arch
 Write-Host "Directory to Build: " $BuildDir
 
+Write-Host "Restore NuGet Packages - NUnit3"
+dotnet restore 
+
 # Visual Studio MSI-Builder - コンパイラーを設定する
 Write-Host "Locate VS 2017 MSBuilder.exe"
 function buildVS {
