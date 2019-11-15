@@ -6,7 +6,8 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace PdfiumSharp{
+namespace PdfiumSharp {
+
   public class PdfInformation {
     public string Author { get; set; }
     public string Creator { get; set; }
@@ -18,7 +19,7 @@ namespace PdfiumSharp{
     public string Title { get; set; }
   }
 
-  public class Native {
+  public static class CallNative {
 
     [Flags]
     public enum FPDF {
@@ -33,54 +34,39 @@ namespace PdfiumSharp{
       PRINTING = 0x800,
       REVERSE_BYTE_ORDER = 0x10
     }
+    public static void GetFPDFInitLibrary() {
+      NativeMethods.FPDF_InitLibrary();
+    }
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern void FPDF_InitLibrary();
+    public static void GetFPDFDestroyLibrary() {
+      NativeMethods.FPDF_DestroyLibrary();
+    }
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern void FPDF_DestroyLibrary();
+    public static IntPtr GetFPDFLoadDocument(string filepath, string password) {
 
-    [DllImport("pdfium.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    public static extern IntPtr FPDF_LoadDocument([MarshalAs(UnmanagedType.LPStr)] string filepath, [MarshalAs(UnmanagedType.LPStr)] string password);
+      return NativeMethods.FPDF_LoadDocument(filepath, password);
+    }
 
-    [DllImport("pdfium.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    public static extern int FPDF_GetPageCount(IntPtr document);
+    public static int GetFPDFGetPageCount(IntPtr document) {
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern uint FPDF_GetMetaText(IntPtr document, string tag, byte[] buffer, uint buflen);
+      return NativeMethods.FPDF_GetPageCount(document);
+    }
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern IntPtr FPDFBitmap_CreateEx(int width, int height, int format, IntPtr first_scan, int stride);
+    public static string GetMetaText(IntPtr document, string tag) {
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern void FPDFBitmap_FillRect(IntPtr bitmapHandle, int left, int top, int width, int height, uint color);
+      uint length = NativeMethods.FPDF_GetMetaText(document, tag, null, 0);
 
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern IntPtr FPDFBitmap_Destroy(IntPtr bitmapHandle);
-
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern void FPDF_RenderPageBitmap(IntPtr bitmapHandle, IntPtr page, int start_x, int start_y, int size_x, int size_y, int rotate, FPDF flags);
-
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern IntPtr FPDF_LoadPage(IntPtr document, int page_index);
-
-    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
-    public static extern IntPtr FPDFText_LoadPage(IntPtr page);
-
-    public static string GetMetaText(IntPtr _document, string _tag) {
-      
-      uint length = FPDF_GetMetaText(_document, _tag, null, 0);
-      
       if (length <= 2)
         return string.Empty;
 
       byte[] buffer = new byte[length];
-      FPDF_GetMetaText(_document, _tag, buffer, length);
+      NativeMethods.FPDF_GetMetaText(document, tag, buffer, length);
 
       return Encoding.Unicode.GetString(buffer, 0, (int)(length - 2));
     }
-    public static DateTime? GetMetaTextAsDate(IntPtr _document, string _tag) {
-      string dt = Native.GetMetaText(_document, _tag);
+
+    public static DateTime? GetMetaTextAsDate(IntPtr document, string tag) {
+      string dt = CallNative.GetMetaText(document, tag);
 
       if (string.IsNullOrEmpty(dt))
         return null;
@@ -127,51 +113,148 @@ namespace PdfiumSharp{
 
       return null;
     }
-  }
 
-  public class PageData : IDisposable {
-    public IntPtr Page { get; private set; }
-    public IntPtr TextPage { get; private set; }
-
-    private bool _disposed;
-
-    public PageData(IntPtr _document, int pageNumber) {
-
-      Page = Native.FPDF_LoadPage(_document, pageNumber);
-      TextPage = Native.FPDFText_LoadPage(Page);
-
+    public static IntPtr GetFPDFBitmapCreateEx(int width, int height, int format, IntPtr firstScan, int stride) {
+      return NativeMethods.FPDFBitmap_CreateEx(width, height, format, firstScan, stride);
     }
 
-    public void Dispose() {
-      if (!_disposed) {
+    public static void GetFPDFBitmapFillRect(IntPtr bitmapHandle, int left, int top, int width, int height, uint color) {
+      NativeMethods.FPDFBitmap_FillRect(bitmapHandle, left, top, width, height, color);
+    }
 
+    public static IntPtr GetFPDFBitmapDestroy(IntPtr bitmapHandle) {
+      return NativeMethods.FPDFBitmap_Destroy(bitmapHandle);
+    }
 
-        _disposed = true;
+    public static void GetFPDFRenderPageBitmap(IntPtr bitmapHandle, IntPtr page, int startX, int startY, int sizeX, int sizeY, int rotate, FPDF flags) {
+      NativeMethods.FPDF_RenderPageBitmap(bitmapHandle, page, startX, startY, sizeX, sizeY, rotate, flags);
+    }
+
+    public static IntPtr GetFPDFLoadPage(IntPtr document, int pageIndex) {
+      return NativeMethods.FPDF_LoadPage(document, pageIndex);
+    }
+
+    public static IntPtr GetFPDFTextLoadPage(IntPtr page) {
+      return NativeMethods.FPDFText_LoadPage(page);
+    }
+
+    public class PageData : IDisposable {
+      public IntPtr Page { get; private set; }
+      public IntPtr TextPage { get; private set; }
+
+      private bool _disposed;
+
+      public PageData(IntPtr document, int pageNumber) {
+
+        Page = CallNative.GetFPDFLoadPage(document, pageNumber);
+        TextPage = CallNative.GetFPDFTextLoadPage(Page);
+
       }
+      /*=============================自信がないです＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝*/
+      public void Dispose() {
+        /* if (!_disposed)
+         {
+
+
+             _disposed = true;
+
+         }*/
+        Dispose(true);
+        GC.SuppressFinalize(this);
+      }
+
+      ~PageData() {
+        // Finalizer calls Dispose(false)
+        Dispose(false);
+      }
+
+
+
+      protected virtual void Dispose(bool _disposing) {
+        if (!_disposed) {
+
+
+          _disposed = true;
+
+        }
+        else {
+          _disposed = _disposing;
+        }
+
+      }
+      /*======================================================================*/
     }
 
   }
 
-  public class PDF {
+  internal static class NativeMethods {
+   
 
-    public string file;
-    public IntPtr doc;
-    public PDF() {
-      
-      Native.FPDF_InitLibrary();
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern void FPDF_InitLibrary();
 
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern void FPDF_DestroyLibrary();
+
+    [DllImport("pdfium.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern IntPtr FPDF_LoadDocument([MarshalAs(UnmanagedType.LPStr)] string filepath, [MarshalAs(UnmanagedType.LPStr)] string password);
+
+    [DllImport("pdfium.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.I8)]
+    internal static extern int FPDF_GetPageCount(IntPtr document);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.U8)]
+    internal static extern uint FPDF_GetMetaText(IntPtr document, string tag, byte[] buffer, uint buflen);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern IntPtr FPDFBitmap_CreateEx(int width, int height, int format, IntPtr first_scan, int stride);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern void FPDFBitmap_FillRect(IntPtr bitmapHandle, int left, int top, int width, int height, uint color);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern IntPtr FPDFBitmap_Destroy(IntPtr bitmapHandle);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern void FPDF_RenderPageBitmap(IntPtr bitmapHandle, IntPtr page, int start_x, int start_y, int size_x, int size_y, int rotate, CallNative.FPDF flags);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern IntPtr FPDF_LoadPage(IntPtr document, int page_index);
+
+    [DllImport("pdfium.dll", CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.FunctionPtr)]
+    internal static extern IntPtr FPDFText_LoadPage(IntPtr page);
+  }
+
+
+  public class PdfiumSharp {
+
+    public string file { get; set; }
+    public IntPtr doc { get; set; }
+
+    public PdfiumSharp() {
+
+      CallNative.GetFPDFInitLibrary();
     }
 
-    ~PDF() {
-      Native.FPDF_DestroyLibrary();
+    ~PdfiumSharp() {
+      CallNative.GetFPDFDestroyLibrary();
     }
 
-
-    public bool Load(string F) {
+    public bool LoadFile(string F) {
 
       file = F;
 
-      doc = Native.FPDF_LoadDocument(file, null);
+      doc =  CallNative.GetFPDFLoadDocument(file, null);
 
       if (doc != null) return true;
       else return false;
@@ -180,40 +263,41 @@ namespace PdfiumSharp{
 
     public int PageCount() {
 
-      return Native.FPDF_GetPageCount(doc);
+      return CallNative.GetFPDFGetPageCount(doc);
 
     }
+
     public PdfInformation GetInformation() {
       var pdfInfo = new PdfInformation();
 
-      pdfInfo.Creator = Native.GetMetaText(doc, "Creator");
-      pdfInfo.Title = Native.GetMetaText(doc, "Title");
-      pdfInfo.Author = Native.GetMetaText(doc, "Author");
-      pdfInfo.Subject = Native.GetMetaText(doc, "Subject");
-      pdfInfo.Keywords = Native.GetMetaText(doc, "Keywords");
-      pdfInfo.Producer = Native.GetMetaText(doc, "Producer");
-      pdfInfo.CreationDate = Native.GetMetaTextAsDate(doc, "CreationDate");
-      pdfInfo.ModificationDate = Native.GetMetaTextAsDate(doc, "ModDate");
+      pdfInfo.Creator = CallNative.GetMetaText(doc, "Creator");
+      pdfInfo.Title = CallNative.GetMetaText(doc, "Title");
+      pdfInfo.Author = CallNative.GetMetaText(doc, "Author");
+      pdfInfo.Subject = CallNative.GetMetaText(doc, "Subject");
+      pdfInfo.Keywords = CallNative.GetMetaText(doc, "Keywords");
+      pdfInfo.Producer = CallNative.GetMetaText(doc, "Producer");
+      pdfInfo.CreationDate = CallNative.GetMetaTextAsDate(doc, "CreationDate");
+      pdfInfo.ModificationDate = CallNative.GetMetaTextAsDate(doc, "ModDate");
 
       return pdfInfo;
     }
 
     public bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY,
-                                             int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight,
-                                             int rotate, Native.FPDF flags, bool renderFormFill) {
-      
-      using (var pageData = new PageData(doc, pageNumber)) {
-        
-        Native.FPDF_RenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY,
+                                                int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight,
+                                                int rotate, CallNative.FPDF flags, bool renderFormFill) {
+
+      using (var pageData = new CallNative.PageData(doc, pageNumber)) {
+
+        CallNative.GetFPDFRenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY,
                                     boundsWidth, boundsHeight, 0, flags);
 
-        }
+      }
 
       return true;
     }
 
     public Image Render(int page, int width, int height, float dpiX, float dpiY) {
-      
+
 
       var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
       bitmap.SetResolution(dpiX, dpiY);
@@ -221,12 +305,12 @@ namespace PdfiumSharp{
       var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
 
       try {
-        var handle = Native.FPDFBitmap_CreateEx(width, height, 4, data.Scan0, width * 4);
+        var handle = CallNative.GetFPDFBitmapCreateEx(width, height, 4, data.Scan0, width * 4);
 
         try {
-          
+
           uint background = 0xFFFFFFFF;
-          Native.FPDFBitmap_FillRect(handle, 0, 0, width, height, background);
+          CallNative.GetFPDFBitmapFillRect(handle, 0, 0, width, height, background);
 
           bool success = this.RenderPDFPageToBitmap(
               page,
@@ -234,14 +318,14 @@ namespace PdfiumSharp{
               (int)dpiX, (int)dpiY,
               0, 0, width, height,
               0,
-              0, 
+              0,
               false);
 
           if (!success)
             throw new Win32Exception();
         }
         finally {
-          Native.FPDFBitmap_Destroy(handle);
+          CallNative.GetFPDFBitmapDestroy(handle);
         }
       }
       finally {
@@ -252,6 +336,7 @@ namespace PdfiumSharp{
 
     }
 
-  }
 
+
+  }
 }
