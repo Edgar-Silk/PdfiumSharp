@@ -9,13 +9,13 @@ namespace Test
     [TestFixture]
     public class PdfiumTest
     {
-        public PDF pdf;
+        public Pdfium pdf;
 
         [OneTimeSetUp]
         public void SetUp()
         {
 
-            pdf = new PDF();
+            pdf = new Pdfium();
 
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string fileName = "test.pdf";
@@ -24,7 +24,7 @@ namespace Test
 
             Console.WriteLine("\nOpen PDF file: " + file);
 
-            pdf.Load(file);
+            pdf.LoadFile(file);
         }
 
         [OneTimeTearDown]

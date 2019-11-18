@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,5 +10,13 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PdfiumSharp\PdfiumSharp.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="xcopy /y /d &quot;$(ProjectDir)lib\$(Platform)\*&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;xcopy /y /d &quot;$(ProjectDir)test\*&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 
 </Project>

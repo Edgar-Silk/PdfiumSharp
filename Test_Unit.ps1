@@ -82,7 +82,7 @@ buildVS -path "$BuildDir/$Project_Name/$Project_Name.csproj"
 # テストを作成する
 Set-Location $BuildDir/$Project_Name
 
-nunit3-console "bin/$Arch/Release/$Project_Name.dll"
+nunit3-console "bin/$Arch/Release/netstandard2.0/$Project_Name.dll"
 
 Set-Location $BuildDir
 
