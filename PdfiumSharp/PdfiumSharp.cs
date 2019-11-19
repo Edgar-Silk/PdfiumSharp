@@ -118,12 +118,14 @@ namespace PdfiumSharp
 
                 try
                 {
-                    return DateTime.Parse(formattedDate);
+                    DateTime.Parse(formattedDate);
                 }
-                catch (FormatException)
+                catch (FormatException ex)
                 {
-                    return null;
+                    Console.Write("Not a valid date format:" + ex.Message);
                 }
+
+                return DateTime.Parse(formattedDate);
             }
 
             return null;
@@ -168,12 +170,10 @@ namespace PdfiumSharp
 
             public PageData(IntPtr document, int pageNumber)
             {
-
-                Page = CallNative.GetFPDFLoadPage(document, pageNumber);
-                TextPage = CallNative.GetFPDFTextLoadPage(Page);
-
+                Page = GetFPDFLoadPage(document, pageNumber);
+                TextPage = GetFPDFTextLoadPage(Page);
             }
-            
+
             public void Dispose()
             {
                 Dispose(true);
@@ -189,10 +189,7 @@ namespace PdfiumSharp
             {
                 if (!_disposed)
                 {
-
-
                     _disposed = true;
-
                 }
                 else
                 {
@@ -200,7 +197,7 @@ namespace PdfiumSharp
                 }
 
             }
-            
+
         }
 
     }
@@ -246,11 +243,10 @@ namespace PdfiumSharp
     public class Pdfium
     {
 
-        private IntPtr doc;
+        private IntPtr _doc;
 
         public Pdfium()
         {
-
             CallNative.GetFPDFInitLibrary();
         }
 
@@ -264,9 +260,9 @@ namespace PdfiumSharp
 
             string file = F;
 
-            doc = CallNative.GetFPDFLoadDocument(file, null);
+            _doc = CallNative.GetFPDFLoadDocument(file, null);
 
-            if (doc == IntPtr.Zero) return false;
+            if (_doc == IntPtr.Zero) return false;
             else return true;
 
         }
@@ -274,7 +270,7 @@ namespace PdfiumSharp
         public int PageCount()
         {
 
-            return CallNative.GetFPDFGetPageCount(doc);
+            return CallNative.GetFPDFGetPageCount(_doc);
 
         }
 
@@ -282,14 +278,14 @@ namespace PdfiumSharp
         {
             var pdfInfo = new PdfInformation();
 
-            pdfInfo.Creator = CallNative.GetMetaText(doc, "Creator");
-            pdfInfo.Title = CallNative.GetMetaText(doc, "Title");
-            pdfInfo.Author = CallNative.GetMetaText(doc, "Author");
-            pdfInfo.Subject = CallNative.GetMetaText(doc, "Subject");
-            pdfInfo.Keywords = CallNative.GetMetaText(doc, "Keywords");
-            pdfInfo.Producer = CallNative.GetMetaText(doc, "Producer");
-            pdfInfo.CreationDate = CallNative.GetMetaTextAsDate(doc, "CreationDate");
-            pdfInfo.ModificationDate = CallNative.GetMetaTextAsDate(doc, "ModDate");
+            pdfInfo.Creator = CallNative.GetMetaText(_doc, "Creator");
+            pdfInfo.Title = CallNative.GetMetaText(_doc, "Title");
+            pdfInfo.Author = CallNative.GetMetaText(_doc, "Author");
+            pdfInfo.Subject = CallNative.GetMetaText(_doc, "Subject");
+            pdfInfo.Keywords = CallNative.GetMetaText(_doc, "Keywords");
+            pdfInfo.Producer = CallNative.GetMetaText(_doc, "Producer");
+            pdfInfo.CreationDate = CallNative.GetMetaTextAsDate(_doc, "CreationDate");
+            pdfInfo.ModificationDate = CallNative.GetMetaTextAsDate(_doc, "ModDate");
 
             return pdfInfo;
         }
@@ -299,7 +295,7 @@ namespace PdfiumSharp
                                                     int rotate, CallNative.FPDF flags, bool renderFormFill)
         {
 
-            using (var pageData = new CallNative.PageData(doc, pageNumber))
+            using (var pageData = new CallNative.PageData(_doc, pageNumber))
             {
 
                 CallNative.GetFPDFRenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY,
@@ -312,7 +308,6 @@ namespace PdfiumSharp
 
         public Image Render(int page, int width, int height, float dpiX, float dpiY)
         {
-
 
             var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             bitmap.SetResolution(dpiX, dpiY);
@@ -339,23 +334,26 @@ namespace PdfiumSharp
                         false);
 
                     if (!success)
-                        throw new Win32Exception();
+                        throw new Win32Exception("RenderPDFPagetToBitmap not succesfull.");
                 }
                 finally
                 {
                     CallNative.GetFPDFBitmapDestroy(handle);
                 }
             }
+            catch
+            {
+                Console.Write("Unable to render PDF image.");
+                
+            }
+
             finally
             {
                 bitmap.UnlockBits(data);
             }
 
             return bitmap;
-
         }
-
-
 
     }
 }
