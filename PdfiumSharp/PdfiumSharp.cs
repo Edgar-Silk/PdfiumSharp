@@ -77,6 +77,7 @@ namespace PdfiumSharp
         public static DateTime? GetMetaTextAsDate(IntPtr document, string tag)
         {
             string dt = CallNative.GetMetaText(document, tag);
+            DateTime parseDate;
 
             if (string.IsNullOrEmpty(dt))
                 return null;
@@ -116,16 +117,10 @@ namespace PdfiumSharp
                     }
                 }
 
-                try
-                {
-                    DateTime.Parse(formattedDate);
-                }
-                catch (FormatException ex)
-                {
-                    Console.Write("Not a valid date format:" + ex.Message);
-                }
+                if (!DateTime.TryParse(formattedDate, out parseDate))
+                    throw new FormatException();
 
-                return DateTime.Parse(formattedDate);
+                return parseDate;
             }
 
             return null;
@@ -318,33 +313,26 @@ namespace PdfiumSharp
             {
                 var handle = CallNative.GetFPDFBitmapCreateEx(width, height, 4, data.Scan0, width * 4);
 
-                try
-                {
+                uint background = 0xFFFFFFFF;
+                CallNative.GetFPDFBitmapFillRect(handle, 0, 0, width, height, background);
 
-                    uint background = 0xFFFFFFFF;
-                    CallNative.GetFPDFBitmapFillRect(handle, 0, 0, width, height, background);
+                this.RenderPDFPageToBitmap(
+                    page,
+                    handle,
+                    (int)dpiX, (int)dpiY,
+                    0, 0, width, height,
+                    0,
+                    0,
+                    false);
 
-                    bool success = this.RenderPDFPageToBitmap(
-                        page,
-                        handle,
-                        (int)dpiX, (int)dpiY,
-                        0, 0, width, height,
-                        0,
-                        0,
-                        false);
+                CallNative.GetFPDFBitmapDestroy(handle);
 
-                    if (!success)
-                        throw new Win32Exception("RenderPDFPagetToBitmap not succesfull.");
-                }
-                finally
-                {
-                    CallNative.GetFPDFBitmapDestroy(handle);
-                }
             }
-            catch
+            catch (Exception ex)
             {
                 Console.Write("Unable to render PDF image.");
-                
+                throw new Win32Exception("RenderFPDFPageToBitmap.", ex);
+
             }
 
             finally
